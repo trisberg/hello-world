@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: hello-world-crac-cache
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: "standard"
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: hello-world-crac-checkpoint
+spec:
+  template:
+    spec:
+      containers:
+      - name: workload
+        image: docker.io/springdeveloper/hello-world:amd64
+        imagePullPolicy: Always
+        env:
+        - name: APP_MESSAGE
+          value: CRaC
+        - name: CRAC_FILES_DIR
+          value: /var/crac/test
+        - name: CRAC_CHECKPOINT
+          value: "true"
+        securityContext:
+          privileged: true
+          capabilities:
+            add:
+            - CHECKPOINT_RESTORE
+            - SYS_ADMIN
+            - SYS_PTRACE
+          runAsUser: 0
+        volumeMounts:
+        - mountPath: /var/crac
+          name: crac-cache
+      restartPolicy: OnFailure
+      imagePullSecrets:
+      - name: registries-credentials
+      volumes:
+      - name: crac-cache
+        persistentVolumeClaim:
+          claimName: hello-world-crac-cache
+  backoffLimit: 4

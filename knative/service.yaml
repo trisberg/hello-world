@@ -1,0 +1,32 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: hello-world
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/min-scale: "0"
+    spec:
+      containers:
+      - name: workload
+        image: docker.io/springdeveloper/hello-world:amd64
+        env:
+        - name: APP_MESSAGE
+          value: CRaC
+        - name: CRAC_FILES_DIR
+          value: /var/crac/test
+        securityContext:
+          runAsUser: 0
+          capabilities:
+            add:
+            - CHECKPOINT_RESTORE
+            - NET_ADMIN
+            - SYS_PTRACE
+        volumeMounts:
+        - mountPath: /var/crac
+          name: crac-cache
+      volumes:
+      - name: crac-cache
+        persistentVolumeClaim:
+          claimName: hello-world-crac-cache
