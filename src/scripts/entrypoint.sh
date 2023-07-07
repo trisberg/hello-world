@@ -10,9 +10,15 @@ if [ ! -z "$CRAC_CHECKPOINT" ]; then
   sleep 5
   jcmd /home/app/hello-world.jar JDK.checkpoint
   sleep 30
+  echo "true" > $CRAC_FILES_DIR/READY
 else
-  java -Dmanagement.endpoint.health.probes.add-additional-paths="true" -Dmanagement.health.probes.enabled="true" -XX:CRaCRestoreFrom=$CRAC_FILES_DIR&
-  PID=$!
-  trap "kill $PID" SIGINT SIGTERM
-  wait $PID
+  if [ -f "$CRAC_FILES_DIR/READY" ]; then
+    java -Dmanagement.endpoint.health.probes.add-additional-paths="true" -Dmanagement.health.probes.enabled="true" -XX:CRaCRestoreFrom=$CRAC_FILES_DIR&
+    PID=$!
+    trap "kill $PID" SIGINT SIGTERM
+    wait $PID
+  else
+    echo "ERROR: CRaC Checkpoint files are not available!"
+    exit -1
+  fi
 fi
