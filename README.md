@@ -2,6 +2,8 @@
 
 This repo provides a simple Hello World sample project for Spring Boot.
 
+For CRaC instructions see [hello-world on CRaC](README-CRAC.md)
+
 It can be deployed as a standalone web app, as a Cloud Foundy app or as a TAP workload, depending on the deployment option choosen when generating the project.
 
 ## Deployment

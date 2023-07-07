@@ -9,7 +9,7 @@ spec:
   build:
     env:
       - name: BP_JVM_VERSION
-        value: "1.8"
+        value: "17"
   env:
   - name: APP_MESSAGE
     value: World

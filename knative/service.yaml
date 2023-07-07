@@ -12,17 +12,12 @@ spec:
       - name: workload
         image: docker.io/springdeveloper/hello-world:amd64
         env:
-        - name: APP_MESSAGE
-          value: CRaC
         - name: CRAC_FILES_DIR
-          value: /var/crac/test
+          value: /var/crac/cache
         securityContext:
-          runAsUser: 0
           capabilities:
             add:
             - CHECKPOINT_RESTORE
-            - NET_ADMIN
-            - SYS_PTRACE
         volumeMounts:
         - mountPath: /var/crac
           name: crac-cache

@@ -4,9 +4,6 @@ WORKDIR /home/app
 
 USER root
 
-ENV JAVA_HOME /opt/jdk
-ENV PATH $JAVA_HOME/bin:$PATH
-
 ENV JAVA_HOME /azul-crac-jdk
 ENV PATH $PATH:$JAVA_HOME/bin
 
@@ -19,7 +16,6 @@ RUN apt-get update && apt-get install -y \
 # Add CRaC JDK
 RUN mkdir $JAVA_HOME \
   && curl https://cdn.azul.com/zulu/bin/zulu17.42.21-ca-crac-jdk17.0.7-linux_x64.tar.gz | tar -xz --strip-components 1 -C $JAVA_HOME
-RUN mkdir -p /opt/app
 
 # Add App
 COPY target/hello-world-0.0.1-SNAPSHOT.jar /home/app/hello-world.jar

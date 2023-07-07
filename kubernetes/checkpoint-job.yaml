@@ -11,9 +11,9 @@ spec:
         imagePullPolicy: Always
         env:
         - name: APP_MESSAGE
-          value: CRaC
+          value: World
         - name: CRAC_FILES_DIR
-          value: /var/crac/test
+          value: /var/crac/cache
         - name: CRAC_CHECKPOINT
           value: "true"
         securityContext:
