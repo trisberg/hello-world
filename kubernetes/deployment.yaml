@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/name: hello-world
+  name: hello-world
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: hello-world
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: hello-world
+        app.kubernetes.io/part-of: hello-world
+    spec:
+      containers:
+      - image: docker.io/springdeveloper/hello-world:amd64
+        imagePullPolicy: IfNotPresent
+        name: app
+        env:
+        - name: CRAC_FILES_DIR
+          value: /var/crac/cache
+        securityContext:
+          capabilities:
+            add:
+            - CHECKPOINT_RESTORE
+        ports:
+        - containerPort: 8080
+        livenessProbe:
+          httpGet:
+            path: /actuator/health/liveness
+            port: 8080
+        readinessProbe:
+          httpGet:
+            path: /actuator/health/readiness
+            port: 8080
+        volumeMounts:
+        - mountPath: /var/crac
+          name: crac-cache
+      volumes:
+      - name: crac-cache
+        persistentVolumeClaim:
+          claimName: hello-world-crac-cache

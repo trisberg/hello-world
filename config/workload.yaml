@@ -6,19 +6,18 @@ metadata:
     apps.tanzu.vmware.com/workload-type: web
     app.kubernetes.io/part-of: hello-world
 spec:
-  build:
-    env:
-      - name: BP_JVM_VERSION
-        value: "17"
   env:
   - name: APP_MESSAGE
     value: World
+  - name: CRAC_FILES_DIR
+    value: /var/crac/cache
   params:
   - name: annotations
     value:
-      autoscaling.knative.dev/minScale: "1"
-  source:
-    git:
-      url: https://github.com/sample-accelerators/hello-world
-      ref:
-        branch: main
+      autoscaling.knative.dev/minScale: "0"
+  image: docker.io/springdeveloper/hello-world:amd64
+  # source:
+  #   git:
+  #     url: https://github.com/trisberg/hello-world
+  #     ref:
+  #       branch: main

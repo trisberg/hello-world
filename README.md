@@ -1,22 +1,12 @@
-# hello-world
+# hello-world on CRaC
 
 This repo provides a simple Hello World sample project for Spring Boot.
 
-For CRaC instructions see [hello-world on CRaC](README-CRAC.md)
+It can be deployed to a Kubernetes cluster utilizing Coordinated Restore at Checkpoint (CRaC).
 
-It can be deployed as a standalone web app, as a Cloud Foundy app or as a TAP workload, depending on the deployment option choosen when generating the project.
+## Local run
 
-## Deployment
-
-### Standalone app with embedded Tomcat server
-
-You can build the project using Maven:
-
-```bash
-./mvnw clean package
-```
-
-To run the app using the embedded Tomcat server you can run this command:
+To run the app locally using the embedded Tomcat server you can run this command:
 
 ```bash
 ./mvnw spring-boot:run
@@ -25,43 +15,168 @@ To run the app using the embedded Tomcat server you can run this command:
 You can modify the default message "World" using an application property of `app.message`:
 
 ```bash
-./mvnw package  
-java -jar target/hello-world-0.0.1-SNAPSHOT.jar --app.message=Test
+/mvnw spring-boot:run -Dspring-boot.run.arguments="--app.message=Test"
 ```
 
-### Deploying to TAP
+## Build image and create CRaC checkpoint
 
-If you make modifications to the source and push to your own Git repository, then you can update the `spec.source.git` information in the `config/workload.yaml` file.
+### Build the image
 
-You can deploy and use the `config/workload.yaml` file to set the initial message:
+> NOTE: This build can be run on X86-64 as well as ARM-64 based systems but the target cluster must be x86-64 based.
+
+To build the image run the `build.sh` script.
 
 ```bash
-tanzu apps workload apply -f config/workload.yaml
+./build.sh
 ```
 
-If you would like deploy the code from tyour local working directory you can use the following command:
+Then push the image to Docker Hub (this sample is using a `springdeveloper` account. If you need to change this, then there are several references in other files that need to get modified as well).
 
 ```bash
-tanzu apps workload create hello-world -f config/workload.yaml \
-  --local-path . \
-  --source-image <REPOSITORY-PREFIX>/hello-world-source \
-  --type web
+docker push springdeveloper/hello-world:amd64
 ```
 
-## Accessing the app deployed to your cluster
+### Create the first checkpoint
+
+To create a PVC that will store the checkpoint files and run a job to create them, run:
+
+```bash
+kubectl create -f crac/checkpoint-pvc.yaml
+kubectl create -f crac/checkpoint-job.yaml
+```
+
+## Deployment
+
+### Deploying as a Kubernetes deployment and service
+
+#### Deploy Kubernetes deployment and service
+
+To create the deployment that will restore from the checkpoint and the service, run the following:
+
+```bash
+kubectl create -f kubernetes/
+```
+
+#### Accessing the app deployed to your cluster
+
+You can create a local port forwarding for the service by running:
+
+```bash
+kubectl port-forward svc/hello-world 8080:80
+```
+
+To access the deployed app open another terminal window and run:
+
+```bash
+curl localhost:8080
+```
+
+### Deploying as a Knative service
+
+#### Deploy Knative service
+
+To create the Knative service that will restore from the checkpoint, run the following:
+
+```bash
+kubectl create -f knative/service.yaml
+```
+
+#### Accessing the app deployed to your cluster
 
 Determine the URL to use for the accessing the app by running:
 
+```bash
+kn service list
 ```
-tanzu apps workload get hello-world
+
+or, using kubectl:
+
+```bash
+kubectl get service.serving.knative.dev
 ```
 
 To access the deployed app use the URL shown under "Workload Knative Services".
 
+```bash
+export URL=<Knative-service-URL>
+```
+
 Then, use `curl` or some other utility to access the URL:
 
-```
-curl <URL>
+```bash
+curl ${URL}
 ```
 
-This depends on the TAP installation having DNS configured for the Knative ingress.
+### Deploying as a TAP workload
+
+> Not working yet
+
+#### Deploy TAP workload from the image
+
+To create the TAP workload that will restore from the checkpoint, run the following:
+
+```bash
+tanzu apps workload create -f config/workload.yaml
+```
+
+#### Accessing the app deployed to your cluster
+
+Determine the URL to use for the accessing the app by running:
+
+```bash
+tanzu apps workload get hello-world
+```
+
+To access the deployed app use the URL shown under "Knative Services".
+
+```bash
+export URL=<Knative-service-URL>
+```
+
+Then, use `curl` or some other utility to access the URL:
+
+```bash
+curl ${URL}
+```
+
+## Updating the App message
+
+To modify the message you can change the `APP_MESSAGE` environment variable in the `kubernetes/checkpoint-job.yaml` file. To apply the change, create a new job using:
+
+```bash
+kubectl create kubernetes/checkpoint-job.yaml
+```
+
+After the job completes, the next time the pod for the service gets restarted it will pick up the change.
+
+### Force restart for Kubernetes deployment
+
+You can force a new pod to get started by deleting the latest one. Get the pod name by running:
+
+```bash
+kubectl get pods -l=app.kubernetes.io/name=hello-world
+```
+
+Then delete it using the following (adjusted for the name of the latest pod):
+
+```bash
+kubectl delete pod/hello-world-6968dbffdc-pdvgf
+```
+
+### Force restart for Knative service
+
+You can force a new pod to get started by deleting the latest revision. Get the revision name by running:
+
+```bash
+kn revision list -s hello-world
+```
+
+Then delete it using the following (adjusted for the name of the latest revision):
+
+```bash
+kn revision delete hello-world-00001
+```
+
+### Force restart for TAP workload
+
+> TBD
