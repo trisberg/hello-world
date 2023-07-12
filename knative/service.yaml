@@ -10,30 +10,15 @@ spec:
     spec:
       containers:
       - name: workload
-        image: docker.io/springdeveloper/hello-world:amd64
+        image: docker.io/springdeveloper/hello-world:crac-job
         imagePullPolicy: Always
         env:
-        - name: REVISION_NAME
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.labels['serving.knative.dev/revision']
-        - name: REVISION_UID
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.labels['serving.knative.dev/revisionUID']
-        - name: NODE_NAME
-          valueFrom:
-            fieldRef:
-              fieldPath: spec.nodeName
         - name: CRAC_FILES_DIR
-          value: /var/crac/${REVISION_NAME}/${REVISION_UID}/${NODE_NAME}
+          value: /var/crac/cache
         securityContext:
           capabilities:
             add:
             - CHECKPOINT_RESTORE
-            - SYS_ADMIN
-        #     - SYS_PTRACE
-          runAsUser: 0
         volumeMounts:
         - mountPath: /var/crac
           name: crac-cache

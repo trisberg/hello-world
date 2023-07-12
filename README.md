@@ -33,7 +33,7 @@ To build the image run the `build.sh` script.
 Then push the image to Docker Hub (this sample is using a `springdeveloper` account. If you need to change this, then there are several references in other files that need to get modified as well).
 
 ```bash
-docker push springdeveloper/hello-world:amd64
+docker push springdeveloper/hello-world:crac-job
 ```
 
 ### Create the first checkpoint

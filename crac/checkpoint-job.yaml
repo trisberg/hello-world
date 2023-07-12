@@ -7,7 +7,7 @@ spec:
     spec:
       containers:
       - name: workload
-        image: docker.io/springdeveloper/hello-world:amd64
+        image: docker.io/springdeveloper/hello-world:crac-job
         imagePullPolicy: Always
         env:
         - name: APP_MESSAGE
