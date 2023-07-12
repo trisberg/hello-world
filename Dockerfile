@@ -19,6 +19,9 @@ RUN mkdir $JAVA_HOME \
 
 # Add App
 COPY target/hello-world-0.0.1-SNAPSHOT.jar /home/app/hello-world.jar
-COPY src/scripts/entrypoint.sh /opt/app/entrypoint.sh
+COPY scripts/entrypoint.sh /opt/app/entrypoint.sh
+WORKDIR /home/app
+RUN jar -xf hello-world.jar
+RUN rm hello-world.jar
 
 ENTRYPOINT /opt/app/entrypoint.sh
