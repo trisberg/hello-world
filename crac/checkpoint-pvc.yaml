@@ -1,11 +1,28 @@
+---
 apiVersion: v1
-kind: PersistentVolumeClaim
+kind: PersistentVolume
 metadata:
-  name: hello-world-crac-cache
+  annotations:
+    kapp.k14s.io/update-strategy: skip
+  name: hello-world
+spec:
+  capacity:
+    storage: 500Mi
+  accessModes:
+    - ReadWriteMany
+  nfs:
+    server: 10.88.11.131
+    path: "/"
+  storageClassName: "nfs"
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: hello-world
 spec:
   accessModes:
-  - ReadWriteOnce
+    - ReadWriteMany
+  storageClassName: "nfs"
   resources:
     requests:
-      storage: 2Gi
-  storageClassName: "standard"
+      storage: 500Mi
