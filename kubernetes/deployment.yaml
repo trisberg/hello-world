@@ -1,3 +1,8 @@
+#@ load("@ytt:data", "data")
+#@ def image():
+#@   return "docker.io/springdeveloper/hello-world:"+data.values.version
+#@ end
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -16,16 +21,24 @@ spec:
         app.kubernetes.io/part-of: hello-world
     spec:
       containers:
-      - image: docker.io/springdeveloper/hello-world:amd64
+      - image: #@ image()
         imagePullPolicy: IfNotPresent
         name: app
         env:
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
         - name: CRAC_FILES_DIR
-          value: /var/crac/cache
+          value: /var/crac/${NODE_NAME}
         securityContext:
+          privileged: true
           capabilities:
             add:
             - CHECKPOINT_RESTORE
+            - SYS_ADMIN
+            - SYS_PTRACE
+          runAsUser: 0
         ports:
         - containerPort: 8080
         livenessProbe:
@@ -42,4 +55,4 @@ spec:
       volumes:
       - name: crac-cache
         persistentVolumeClaim:
-          claimName: hello-world-crac-cache
+          claimName: hello-world

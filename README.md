@@ -36,13 +36,12 @@ Then push the image to Docker Hub (this sample is using a `springdeveloper` acco
 docker push springdeveloper/hello-world:amd64
 ```
 
-### Create the first checkpoint
+### Create the NFS server for the checkpoint files
 
-To create a PVC that will store the checkpoint files and run a job to create them, run:
+To create a PVC and an NFS server for storing the checkpoint files, run:
 
 ```bash
-kubectl create -f crac/checkpoint-pvc.yaml
-kubectl create -f crac/checkpoint-job.yaml
+kapp deploy -a nfs -y -f crac-nfs
 ```
 
 ## Deployment
@@ -54,7 +53,22 @@ kubectl create -f crac/checkpoint-job.yaml
 To create the deployment that will restore from the checkpoint and the service, run the following:
 
 ```bash
-kubectl create -f kubernetes/
+ytt -f kubernetes \
+  --data-value=version=$(cat VERSION) \
+  --data-value=nfs_server_ip=$(kubectl get service nfs-server -o jsonpath='{.spec.clusterIP}') | \
+kapp deploy -a hello-world -y -f -
+```
+
+To scale the deployment to zero use:
+
+```
+kubectl scale deployment/hello-world --replicas=0
+```
+
+To scale the deployment up use:
+
+```
+kubectl scale deployment/hello-world --replicas=1
 ```
 
 #### Accessing the app deployed to your cluster
@@ -72,6 +86,24 @@ curl localhost:8080
 ```
 
 ### Deploying as a Knative service
+
+#### Configure Knative
+
+Update the Knative configuration with the following features enabled:
+
+```
+  kubernetes.podspec-securitycontext: Enabled
+  kubernetes.containerspec-addcapabilities: Enabled
+  kubernetes.podspec-persistent-volume-claim: Enabled
+  kubernetes.podspec-persistent-volume-write: Enabled
+  kubernetes.podspec-fieldref: Enabled
+```
+
+Use this command to edit the config:
+
+```
+kubectl edit configmap/config-features -n knative-serving
+```
 
 #### Deploy Knative service
 

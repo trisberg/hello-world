@@ -1,3 +1,4 @@
+#@ load("@ytt:data", "data")
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -11,7 +12,7 @@ spec:
   accessModes:
     - ReadWriteMany
   nfs:
-    server: 10.88.11.131
+    server: #@ data.values.nfs_server_ip
     path: "/"
   storageClassName: "nfs"
 ---

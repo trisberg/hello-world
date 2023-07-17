@@ -32,7 +32,7 @@ spec:
             add:
             - CHECKPOINT_RESTORE
             - SYS_ADMIN
-        #     - SYS_PTRACE
+            - SYS_PTRACE
           runAsUser: 0
         volumeMounts:
         - mountPath: /var/crac
@@ -40,4 +40,4 @@ spec:
       volumes:
       - name: crac-cache
         persistentVolumeClaim:
-          claimName: hello-world-crac-cache
+          claimName: hello-world
