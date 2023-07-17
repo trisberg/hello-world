@@ -73,6 +73,25 @@ curl localhost:8080
 
 ### Deploying as a Knative service
 
+#### Configure Knative
+
+Update the Knative configuration with the following features enabled:
+
+```
+  kubernetes.podspec-securitycontext: Enabled
+  kubernetes.containerspec-addcapabilities: Enabled
+  kubernetes.podspec-persistent-volume-claim: Enabled
+  kubernetes.podspec-persistent-volume-write: Enabled
+  kubernetes.podspec-fieldref: Enabled
+```
+
+Use this command to edit the config:
+
+```
+kubectl edit configmap/config-features -n knative-serving
+```
+
+
 #### Deploy Knative service
 
 To create the Knative service that will restore from the checkpoint, run the following:

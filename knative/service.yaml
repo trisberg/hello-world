@@ -25,4 +25,4 @@ spec:
       volumes:
       - name: crac-cache
         persistentVolumeClaim:
-          claimName: hello-world-crac-cache
+          claimName: hello-world
