@@ -18,7 +18,6 @@ public class HelloWorldController {
 	public String index() {
 		logger.info("Received request for /");
 		logger.info("app.message: " + config.getMessage());
-		logger.info("CRAC_FILES_DIR: " + System.getenv("CRAC_FILES_DIR"));
 		return "Hello " + config.getMessage();
 	}
 
