@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.example</groupId>
 	<artifactId>hello-world</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.1.0</version>
 	<name>hello-world</name>
 	<description>Hello World sample project for Spring Boot on Cloud Foundry</description>
 	<properties>

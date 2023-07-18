@@ -18,10 +18,10 @@ RUN mkdir $JAVA_HOME \
   && curl https://cdn.azul.com/zulu/bin/zulu17.42.21-ca-crac-jdk17.0.7-linux_x64.tar.gz | tar -xz --strip-components 1 -C $JAVA_HOME
 
 # Add App
-COPY target/hello-world-0.0.1-SNAPSHOT.jar /home/app/hello-world.jar
+COPY target/hello-world-*.jar /home/app/hello-world.jar
 COPY docker/entrypoint.sh /opt/app/entrypoint.sh
 WORKDIR /home/app
 RUN jar -xf hello-world.jar
 RUN rm hello-world.jar
 
-ENTRYPOINT /opt/app/entrypoint.sh
+CMD ["/opt/app/entrypoint.sh"]

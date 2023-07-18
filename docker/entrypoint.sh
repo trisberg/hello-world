@@ -10,4 +10,4 @@ if [ -z "$(ls -A $CRAC_FILES_DIR)" ]; then
   jcmd org.springframework.boot.loader.JarLauncher JDK.checkpoint
   sleep 5
 fi
-java -Dmanagement.endpoint.health.probes.add-additional-paths="true" -Dmanagement.health.probes.enabled="true" -XX:CRaCRestoreFrom=$CRAC_FILES_DIR
+exec java -Dmanagement.endpoint.health.probes.add-additional-paths="true" -Dmanagement.health.probes.enabled="true" -XX:CRaCRestoreFrom=$CRAC_FILES_DIR
