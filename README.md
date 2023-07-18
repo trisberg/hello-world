@@ -37,7 +37,7 @@ This will build and push the image to Docker Hub (this sample is using a `spring
 To create a PVC and an NFS server for storing the checkpoint files, run:
 
 ```bash
-kapp deploy -a nfs -y -f crac-nfs
+kubectl apply -f crac-nfs
 ```
 
 ## Deployment
