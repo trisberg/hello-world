@@ -31,7 +31,6 @@ spec:
         - name: CRAC_FILES_DIR
           value: /var/crac/${APP_VERSION}/${NODE_NAME}
         securityContext:
-          privileged: true
           capabilities:
             add:
             - CHECKPOINT_RESTORE
