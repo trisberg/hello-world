@@ -1,7 +1,12 @@
 #!/usr/bin/env bash
 set -e
 
-./mvnw clean package
+ARCH=${TARGET_ARCH:-amd64}
+if [[ !( $ARCH == 'arm64' || $ARCH == 'amd64' ) ]]; then
+  echo "$ARCH is an invalid cluster architecture value, set the TARGET_ARCH env var to 'amd64' or 'arm64'"
+fi
+./mvnw clean package --no-transfer-progress
 BUILD_VERSION=$(cat VERSION)
-docker build --platform linux/amd64 -t springdeveloper/hello-world:$BUILD_VERSION -f ./docker/Dockerfile .
-docker push springdeveloper/hello-world:$BUILD_VERSION
+echo "Building image with tag $ARCH-$BUILD_VERSION"
+docker build --platform linux/$ARCH -t springdeveloper/hello-world:$ARCH-$BUILD_VERSION -f ./docker/$ARCH/Dockerfile .
+docker push springdeveloper/hello-world:$ARCH-$BUILD_VERSION

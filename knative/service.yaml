@@ -1,3 +1,5 @@
+#@ load("@ytt:data", "data")
+---
 apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
@@ -10,7 +12,7 @@ spec:
     spec:
       containers:
       - name: workload
-        image: docker.io/springdeveloper/hello-world:amd64
+        image: #@ "docker.io/springdeveloper/hello-world:"+data.values.arch+"-"+data.values.version
         imagePullPolicy: Always
         env:
         - name: REVISION_NAME

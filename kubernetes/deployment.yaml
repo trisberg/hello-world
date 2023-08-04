@@ -18,7 +18,7 @@ spec:
         app.kubernetes.io/part-of: hello-world
     spec:
       containers:
-      - image: #@ "docker.io/springdeveloper/hello-world:"+data.values.version
+      - image: #@ "docker.io/springdeveloper/hello-world:"+data.values.arch+"-"+data.values.version
         imagePullPolicy: IfNotPresent
         name: app
         env:
@@ -31,11 +31,10 @@ spec:
         - name: CRAC_FILES_DIR
           value: /var/crac/${APP_VERSION}/${NODE_NAME}
         securityContext:
-          privileged: true
           capabilities:
             add:
             - CHECKPOINT_RESTORE
-            - SYS_ADMIN
+            - NET_ADMIN
             - SYS_PTRACE
           runAsUser: 0
         ports:

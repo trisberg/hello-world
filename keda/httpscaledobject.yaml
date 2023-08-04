@@ -1,0 +1,16 @@
+apiVersion: http.keda.sh/v1alpha1
+kind: HTTPScaledObject
+metadata:
+  name: hello-world
+spec:
+  hosts: 
+  - hello-world.springdeveloper.dev
+  targetPendingRequests: 10
+  scaledownPeriod: 30
+  scaleTargetRef:
+    deployment: hello-world
+    service: hello-world
+    port: 80
+  replicas:
+    min: 0
+    max: 5

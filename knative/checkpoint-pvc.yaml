@@ -1,0 +1,29 @@
+#@ load("@ytt:data", "data")
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  annotations:
+    kapp.k14s.io/update-strategy: skip
+  name: hello-world
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteMany
+  nfs:
+    server: #@ data.values.nfs_server_ip
+    path: "/"
+  storageClassName: "nfs"
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: hello-world
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: "nfs"
+  resources:
+    requests:
+      storage: 500Mi

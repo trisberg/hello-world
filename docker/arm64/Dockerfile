@@ -14,12 +14,12 @@ ENV PATH $PATH:$JAVA_HOME/bin
 
 # Add CRaC JDK
 RUN mkdir $JAVA_HOME \
-  && curl https://cdn.azul.com/zulu/bin/zulu17.44.17-ca-crac-jdk17.0.8-linux_x64.tar.gz | tar -xz --strip-components 1 -C $JAVA_HOME
+  && curl https://cdn.azul.com/zulu/bin/zulu17.44.17-ca-crac-jdk17.0.8-linux_aarch64.tar.gz | tar -xz --strip-components 1 -C $JAVA_HOME
 WORKDIR /home/app
 
 # Add App
 COPY target/hello-world-*.jar /home/app/hello-world.jar
-COPY docker/entrypoint.sh /opt/app/entrypoint.sh
+COPY docker/arm64/entrypoint.sh /opt/app/entrypoint.sh
 RUN jar -xf hello-world.jar
 RUN rm hello-world.jar
 

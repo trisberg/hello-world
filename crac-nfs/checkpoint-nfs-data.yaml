@@ -1,3 +1,4 @@
+#@ load("@ytt:data", "data")
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -9,4 +10,4 @@ spec:
   resources:
     requests:
       storage: 8Gi
-  storageClassName: "standard"
+  storageClassName: #@ data.values.storage_class_name
