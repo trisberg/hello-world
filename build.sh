@@ -8,5 +8,5 @@ fi
 ./mvnw clean package --no-transfer-progress
 BUILD_VERSION=$(cat VERSION)
 echo "Building image with tag $ARCH-$BUILD_VERSION"
-docker build --platform linux/$ARCH -t springdeveloper/hello-world:$ARCH-$BUILD_VERSION -f ./docker/$ARCH/Dockerfile .
-docker push springdeveloper/hello-world:$ARCH-$BUILD_VERSION
+docker build --platform linux/$ARCH -t $REGISTRY_PREFIX/hello-world:$ARCH-$BUILD_VERSION -f ./docker/$ARCH/Dockerfile .
+docker push $REGISTRY_PREFIX/hello-world:$ARCH-$BUILD_VERSION

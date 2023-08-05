@@ -20,15 +20,21 @@ You can modify the default message "World" using an application property of `app
 
 ## Build image and push to Docker Hub
 
-> NOTE: This build can be run on X86-64 as well as ARM-64 based systems and you can specify the target architecture to use as `amd64` for X86-64 based Kubernetes clusters or as `arm64` for ARM based ones.
+First, set the `REGISTRY_PREFIX` env var to your preferred registry and account to use.
 
-To specify the target architecture of the Kubernetes cluster set the `TARGET_ARCH` environment variable. For x64_64 based systems set:
+```bash
+export REGISTRY_PREFIX='docker.io/springdeveloper'
+```
+
+> NOTE: This build can be run on X86-64 as well as ARM-64 based systems and you can specify the target architecture to use as `amd64` for X86-64 based systems or as `arm64` for ARM based ones.
+
+To specify the target architecture of the system where you will run the app, set the `TARGET_ARCH` environment variable. For x64_64 based systems set:
 
 ```bash
 export TARGET_ARCH=amd64
 ```
 
-and, for ARM based system set:
+and, for ARM based systems set:
 
 ```bash
 export TARGET_ARCH=arm64
@@ -42,7 +48,7 @@ To build the image run the `build.sh` script.
 ./build.sh
 ```
 
-This will build and push the image to Docker Hub (this sample is using a `springdeveloper` account. If you need to change this, then there are a few references in other files that need to get modified as well).
+This will build and push the image to registry and account specified above in the `REGISTRY_PREFIX` env var.
 
 ## Running locally using Docker
 
@@ -56,7 +62,7 @@ To start the container run:
 docker run -it --rm -p 8080:8080 -e CRAC_FILES_DIR=/crac/hello-world --name hello-world \
   --mount source=cracvol,target=/crac \
   --cap-add CHECKPOINT_RESTORE --cap-add NET_ADMIN --cap-add SYS_PTRACE --cap-add SYS_ADMIN \
-  docker.io/springdeveloper/hello-world:${TARGET_ARCH}-$(cat VERSION)
+  ${REGISTRY_PREFIX}/hello-world:${TARGET_ARCH}-$(cat VERSION)
 ```
 
 If you kill the `hello-world` container you will notice that the next time you start it, it will restore the files from the attached `cracvol` volume.
@@ -85,6 +91,7 @@ To create the deployment that will restore from the checkpoint and the service, 
 
 ```bash
 ytt -f kubernetes \
+  --data-value=registry_prefix=$REGISTRY_PREFIX \
   --data-value=arch=$TARGET_ARCH \
   --data-value=version=$(cat VERSION) \
   --data-value=nfs_server_ip=$(kubectl get service nfs-server -o jsonpath='{.spec.clusterIP}') | \
@@ -146,6 +153,7 @@ To create the Knative service that will checkpoint and then restore from the che
 
 ```bash
 ytt -f knative \
+  --data-value=registry_prefix=$REGISTRY_PREFIX \
   --data-value=arch=$TARGET_ARCH \
   --data-value=version=$(cat VERSION) \
   --data-value=nfs_server_ip=$(kubectl get service nfs-server -o jsonpath='{.spec.clusterIP}') | \

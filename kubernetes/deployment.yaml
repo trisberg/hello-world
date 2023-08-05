@@ -18,7 +18,7 @@ spec:
         app.kubernetes.io/part-of: hello-world
     spec:
       containers:
-      - image: #@ "docker.io/springdeveloper/hello-world:"+data.values.arch+"-"+data.values.version
+      - image: #@ data.values.registry_prefix+"/hello-world:"+data.values.arch+"-"+data.values.version
         imagePullPolicy: IfNotPresent
         name: app
         env:
@@ -53,4 +53,4 @@ spec:
       volumes:
       - name: crac-cache
         persistentVolumeClaim:
-          claimName: hello-world
+          claimName: hello-world-k8s

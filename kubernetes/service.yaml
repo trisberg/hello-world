@@ -3,7 +3,7 @@ kind: Service
 metadata:
   labels:
     app.kubernetes.io/name: hello-world
-  name: hello-world
+  name: hello-world-k8s
 spec:
   ports:
   - port: 80

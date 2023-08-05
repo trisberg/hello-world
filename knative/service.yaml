@@ -12,7 +12,7 @@ spec:
     spec:
       containers:
       - name: workload
-        image: #@ "docker.io/springdeveloper/hello-world:"+data.values.arch+"-"+data.values.version
+        image: #@ data.values.registry_prefix+"/hello-world:"+data.values.arch+"-"+data.values.version
         imagePullPolicy: Always
         env:
         - name: REVISION_NAME
@@ -42,4 +42,4 @@ spec:
       volumes:
       - name: crac-cache
         persistentVolumeClaim:
-          claimName: hello-world
+          claimName: hello-world-knative

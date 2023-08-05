@@ -16,9 +16,14 @@ public class HelloWorldController {
 
 	@RequestMapping("/")
 	public String index() {
-		logger.info("Received request for /");
-		logger.info("app.message: " + config.getMessage());
-		return "Hello " + config.getMessage();
+		String ts = java.time.Clock.systemUTC().instant().toString();
+		String pod = System.getenv("HOSTNAME");
+		if (pod == null) {
+			pod = "local";
+		}
+		String message = config.getMessage() + " from " + pod + " at " + ts;
+		logger.info("Message: " + message);
+		return "Hello " + message;
 	}
 
 }

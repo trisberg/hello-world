@@ -3,14 +3,14 @@ kind: HTTPScaledObject
 metadata:
   name: hello-world
 spec:
-  hosts: 
+  hosts:
   - hello-world.springdeveloper.dev
   targetPendingRequests: 10
   scaledownPeriod: 30
   scaleTargetRef:
     deployment: hello-world
-    service: hello-world
+    service: hello-world-k8s
     port: 80
   replicas:
     min: 0
-    max: 5
+    max: 10
