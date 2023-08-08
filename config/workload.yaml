@@ -1,3 +1,5 @@
+#@ load("@ytt:data", "data")
+---
 apiVersion: carto.run/v1alpha1
 kind: Workload
 metadata:
@@ -9,15 +11,16 @@ spec:
   env:
   - name: APP_MESSAGE
     value: World
+  - name: APP_VERSION
+    value: #@ data.values.version
+  - name: NODE_NAME
+    valueFrom:
+      fieldRef:
+        fieldPath: spec.nodeName
   - name: CRAC_FILES_DIR
-    value: /var/crac/cache
+    value: /var/crac/${APP_VERSION}/${NODE_NAME}
   params:
   - name: annotations
     value:
       autoscaling.knative.dev/minScale: "0"
-  image: docker.io/springdeveloper/hello-world:amd64
-  # source:
-  #   git:
-  #     url: https://github.com/trisberg/hello-world
-  #     ref:
-  #       branch: main
+  image: #@ data.values.registry_prefix+"/hello-world:"+data.values.arch+"-"+data.values.version

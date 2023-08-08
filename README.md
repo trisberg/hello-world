@@ -195,7 +195,11 @@ curl $APP_URL
 To create the TAP workload that will restore from the checkpoint, run the following:
 
 ```bash
-tanzu apps workload create -f config/workload.yaml
+ytt -f config/workload.yaml \
+  --data-value=registry_prefix=$REGISTRY_PREFIX \
+  --data-value=arch=$TARGET_ARCH \
+  --data-value=version=$(cat VERSION) | \
+kubectl apply -f -
 ```
 
 #### Accessing the app deployed to your cluster
