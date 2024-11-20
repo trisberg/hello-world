@@ -34,6 +34,12 @@ Using specific endpoint:
 tanzu login --endpoint <provided endpoint>
 ``` 
 
+Using specific endpoint with self-signed certs:
+
+```shell
+tanzu login --endpoint <provided endpoint> --endpoint-ca-certificate <path to cert>
+``` 
+
 For a staging environment:
 
 ```shell
